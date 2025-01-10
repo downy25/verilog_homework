@@ -1,0 +1,28 @@
+soc 수업 duty를 이용한 color 제어
+
+공급되는 clk 1kHz로 50Hz의 pwm신호를 만들려고 한다면
+주기 0.001 , 0.02  -->20번수행
+pwm의 duty ratio는 5%의 분해능을 가지고 있음
+
+
+<pwm 계산>
+5,000,000 -->5MHz   주기 : 0.0000002
+1,000      --> 1kHz    주기 : 0.001  
+
+0.001 / 0.0000002 = 5,000 
+
+---> 외부에서 어디서 0으로 떨어뜨릴지만 정해주면됨 --> 듀티비를 정함
+
+-->듀티값을 입력으로 넣어주면 됨
+
+
+
+
+soc수업 과제 1
+Toggle sw 4개
+
+1) Toggle SW[0]  Low : Left (왼쪽으로 led shift) ,High : Right(오른쪽 led shift)
+2) Toggle SW[1]  Low : Left (1개만 -->초기상태) , High : Right(off ->led가 켜저있으면 off, on -> led가 꺼져있으면 on)
+3) Toggle SW[3:2]     2'b00 : 1S, 2'b01: 500ms, 2'b10:250ms, 2'b11:100ms       -->swcase문 이용, 
+
+
