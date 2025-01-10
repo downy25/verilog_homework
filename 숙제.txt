@@ -26,3 +26,4 @@ Toggle sw 4개
 3) Toggle SW[3:2]     2'b00 : 1S, 2'b01: 500ms, 2'b10:250ms, 2'b11:100ms       -->swcase문 이용, 
 
 
+https://mybox.naver.com/share/list?shareKey=P1dHHcLEoazks2ifCX8tidmkQ5K-hIV7TuTdTH3EBagD&resourceKey=cmFkYXJwYXJrfDM0NzI1OTE1ODA4NzUxNjc4MjB8RHwxNTY3Mjc4MQ
