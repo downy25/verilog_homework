@@ -16,32 +16,9 @@ module top_led_ctr(clk_in,sw,led);
         .clk_in1(clk_in)      // input clk_in1
     );
 	//5Mhz -> 10hz
-	clk_in_10hz dut1(clk_out,clk_nhz); 
+	clk_in_10hz dut1(clk_out,sw,clk_nhz); 
 	//sw , led
 	led_sw_shift dut2(clk_nhz,sw,led);
-endmodule
-
-module clk_in_10hz(clk_in,clk_out); //clk_in 5Mhz --> clk_out 10hz
-	input clk_in; //1Mhz input
-	output clk_out;
-	
-	reg clk_out;
-	reg [22:0] cnt;
-	
-	initial begin
-		cnt = 23'd0;
-		clk_out = 1'b0;
-	end
-	
-	always @ (posedge clk_in) begin
-		if(cnt == 22'd249_999) begin
-			clk_out = ~clk_out;
-			cnt <= 22'd0;
-		end
-		else
-			cnt <= cnt + 1;
-	end
-
 endmodule
 
 module led_sw_shift(clk_in,sw,led);
@@ -62,3 +39,57 @@ module led_sw_shift(clk_in,sw,led);
 	end
 endmodule
 	
+
+//sw 입력에 따른 변화
+module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
+	input clk_in; //1Mhz input
+	input [3:0] sw;
+	output clk_out;
+	
+	
+	reg clk_out;
+	reg [22:0] cnt; //counting 하는 변수
+	reg [22:0] cnt_val [3:0]; //어느정도 카운팅을 할지 정하는 배열 -->led출력 시간조절
+	reg [1:0] prev_sw;
+	
+	initial begin
+		cnt = 23'd0;
+		prev_sw = 2'b00;
+		cnt_val[0] = 19'd499_999;  //2'b00 --> 200ms
+		cnt_val[1] = 20'd874_999;  //2'b01 --> 300ms
+		cnt_val[2] = 21'd1249_999; //2'b10 --> 500ms
+		cnt_val[3] = 23'd2499_999; //2'b11 --> 1s
+		clk_out = 1'b0;
+	end
+	
+	always @ (posedge clk_in) begin
+		//sw값이 순간적으로 달라지면 cnt의 값을 남기지 않고 초기화 해야함
+		if(sw[3:2] != prev_sw[1:0]) begin
+			cnt <= 23'd0;
+			clk_out <= 1'b0;
+		end
+		
+		if(sw[3:2] == 2'b00 && cnt == cnt_val[0]) begin
+			clk_out = ~clk_out;
+			cnt <= 23'd0;
+		end
+		else if(sw[3:2] == 2'b01 && cnt == cnt_val[1]) begin
+			clk_out = ~clk_out;
+			cnt <= 23'd0;
+		end
+		else if(sw[3:2] == 2'b10 && cnt == cnt_val[2]) begin
+			clk_out = ~clk_out;
+			cnt <= 23'd0;
+		end
+		else if(sw[3:2] == 2'b11 && cnt == cnt_val[3]) begin
+			clk_out = ~clk_out;
+			cnt <= 23'd0;
+		end
+		else
+			cnt <= cnt + 1;
+		
+		//이전값 save
+		prev_sw[1:0] = sw[3:2]; 
+	end
+
+endmodule
