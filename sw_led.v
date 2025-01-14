@@ -9,7 +9,7 @@ module top_led_ctr(clk_in,sw,led);
 	
 	//125Mhz -> 5Mhz ip
 	clk_5mhz dut0
-   (
+    (
         // Clock out ports
         .clk_out1(clk_out),     // output clk_out1
         // Clock in ports
@@ -42,19 +42,19 @@ endmodule
 
 //sw 입력에 따른 변화
 module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
-	input clk_in; //1Mhz input
+	input clk_in; //5Mhz input
 	input [3:0] sw;
 	output clk_out;
 	
 	
-	reg clk_out;
+	reg clk_out; 
+	reg [1:0] prv_sw;
 	reg [22:0] cnt; //counting 하는 변수
 	reg [22:0] cnt_val [3:0]; //어느정도 카운팅을 할지 정하는 배열 -->led출력 시간조절
-	reg [1:0] prev_sw;
 	
 	initial begin
 		cnt = 23'd0;
-		prev_sw = 2'b00;
+		prv_sw = 2'b00;
 		cnt_val[0] = 19'd499_999;  //2'b00 --> 200ms
 		cnt_val[1] = 20'd874_999;  //2'b01 --> 300ms
 		cnt_val[2] = 21'd1249_999; //2'b10 --> 500ms
@@ -64,32 +64,30 @@ module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
 	
 	always @ (posedge clk_in) begin
 		//sw값이 순간적으로 달라지면 cnt의 값을 남기지 않고 초기화 해야함
-		if(sw[3:2] != prev_sw[1:0]) begin
-			cnt <= 23'd0;
+		if(sw[3:2] != prv_sw[1:0]) begin
 			clk_out <= 1'b0;
+			cnt <= 23'd0;
 		end
-		
+			
 		if(sw[3:2] == 2'b00 && cnt == cnt_val[0]) begin
-			clk_out = ~clk_out;
+			clk_out <= ~clk_out;
 			cnt <= 23'd0;
 		end
 		else if(sw[3:2] == 2'b01 && cnt == cnt_val[1]) begin
-			clk_out = ~clk_out;
+			clk_out <= ~clk_out;
 			cnt <= 23'd0;
 		end
 		else if(sw[3:2] == 2'b10 && cnt == cnt_val[2]) begin
-			clk_out = ~clk_out;
+			clk_out <= ~clk_out;
 			cnt <= 23'd0;
 		end
 		else if(sw[3:2] == 2'b11 && cnt == cnt_val[3]) begin
-			clk_out = ~clk_out;
+			clk_out <= ~clk_out;
 			cnt <= 23'd0;
 		end
 		else
 			cnt <= cnt + 1;
 		
-		//이전값 save
-		prev_sw[1:0] = sw[3:2]; 
+		prv_sw[1:0] <= sw[3:2];
 	end
-
 endmodule
