@@ -1,21 +1,35 @@
-//module top_led_ctr(clk_in,led);
-	//input clk_in;
-	//output clk_out;
-	//output [3:0] led;
+module top_led_ctr(clk_in,sw,led);
+	input clk_in;
+	input [3:0] sw;
+	output [3:0] led;
 	
-	//wire clk_out;
+	wire [3:0] led;
+	wire clk_out;
+	wire clk_nhz;
 	
-//endmodule
+	//125Mhz -> 5Mhz ip
+	clk_5mhz dut0
+   (
+        // Clock out ports
+        .clk_out1(clk_out),     // output clk_out1
+        // Clock in ports
+        .clk_in1(clk_in)      // input clk_in1
+    );
+	//5Mhz -> 10hz
+	clk_in_10hz dut1(clk_out,clk_nhz); 
+	//sw , led
+	led_sw_shift dut2(clk_nhz,sw,led);
+endmodule
 
 module clk_in_10hz(clk_in,clk_out); //clk_in 5Mhz --> clk_out 10hz
 	input clk_in; //1Mhz input
 	output clk_out;
 	
 	reg clk_out;
-	reg [21:0] cnt;
+	reg [22:0] cnt;
 	
 	initial begin
-		cnt = 22'd0;
+		cnt = 23'd0;
 		clk_out = 1'b0;
 	end
 	
@@ -31,7 +45,7 @@ module clk_in_10hz(clk_in,clk_out); //clk_in 5Mhz --> clk_out 10hz
 endmodule
 
 module led_sw_shift(clk_in,sw,led);
-	input clk_in; //10hz
+	input clk_in; //5hz
 	input [3:0] sw;
 	output [3:0] led;
 	
