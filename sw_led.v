@@ -86,7 +86,9 @@ module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
 		//sw값이 순간적으로 달라지면 cnt의 값을 남기지 않고 초기화 해야함
 		if(sw[3:2] != prev_sw[1:0]) begin
 			cnt <= 23'd0;	
+			clk_out <= 1'b0;
 		end
+
 		if(sw[3:2] == 2'b00 && cnt == cnt_val[0]) begin
 			clk_out <= ~clk_out;
 			cnt <= 23'd0;
@@ -107,6 +109,6 @@ module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
 			cnt <= cnt + 1;
 		
 		//이전값 save
-		prev_sw[1:0] <= sw[3:2]; 
+		prev_sw <= sw[3:2]; 
 	end
 endmodule
