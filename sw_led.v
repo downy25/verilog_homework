@@ -27,26 +27,34 @@ module led_sw_shift(clk_in,sw,led);
 	output [3:0] led;
 
 	reg [3:0] CompareBit;
-	//reg [3:0] prv_sw; //이전 sw값 저장
-	reg [3:0] prv_led; //이전 led값 저장	
+	reg [3:0] InitBit;
 	reg [3:0] led;
+	reg prv_sw;
 	
 	initial begin
-		led = 4'b0001;
+		//led = 4'b0001;
+		led = 4'b0000;
+		InitBit = 4'b0001;
 		CompareBit = 4'b1000;
 	end
-
+																													
 	always @ (posedge clk_in) begin
 		if(sw[0] == 1'b1) //sw0이 눌리면
 			led <= {led[0], led[3:1]}; //right shift
 		else begin
 			if(sw[1] == 1'b1) begin
+				InitBit <= 4'b0001;
 				led <= (led ^ CompareBit); //오른쪽 끝부터 토글링
 				CompareBit <= CompareBit >> 1;
 				if(CompareBit == 4'b0000) CompareBit <= 4'b1000; //다시 초기화
 			end
-			else 
-				led <= {led[2:0], led[3]};  //left shift
+			else begin
+				CompareBit <= 4'b1000;
+				led <= (led & 4'b0000) | InitBit;
+				InitBit <= InitBit << 1;
+				if(InitBit == 4'b1000) InitBit <= 4'b0001;
+				//led <= {led[2:0], led[3]};  //left shift
+			end
 		end
 	end
 endmodule
