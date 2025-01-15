@@ -48,9 +48,6 @@ module led_sw_shift(clk_in,sw,led);
 			else 
 				led <= {led[2:0], led[3]};  //left shift
 		end
-			
-		
-		
 	end
 endmodule
 	
@@ -82,7 +79,6 @@ module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
 		if(sw[3:2] != prev_sw[1:0]) begin
 			cnt <= 23'd0;	
 		end
-		
 		if(sw[3:2] == 2'b00 && cnt == cnt_val[0]) begin
 			clk_out <= ~clk_out;
 			cnt <= 23'd0;
@@ -105,5 +101,4 @@ module clk_in_10hz(clk_in,sw,clk_out); //clk_in 5Mhz --> clk_out 10hz
 		//이전값 save
 		prev_sw[1:0] <= sw[3:2]; 
 	end
-
 endmodule
